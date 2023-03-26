@@ -21,6 +21,12 @@ to degenerate R-trees, which means instead of indexing 2-dimensional space, they
 used for indexing 1 dimension (which is often time intervals).
 
 '''
+
+from Trajectory import Trajectory
+
+'''
+Grid-Mapped Interval Tree Class
+'''
 class GIT:
     sf_xmin = 0
     sf_xmax = 0
@@ -30,6 +36,7 @@ class GIT:
     delta_y = 0
 
     def __init__(self):
+
         pass
 
     def __str__(self):

@@ -16,11 +16,12 @@ class Trajectory:
     self.tgpairs = tgpairs
 
   '''
-  Function to print contents of object
+  Function to print contents of trajectory object
   '''
   def __str__(self):
-    return f"{self.traj_id}" # replace as needed
+    return f"{self.traj_id} = [{self.tgpairs}]" # replace as needed => need to print time-geometry pairs
 
 
 
-# t1 = Traject 
+# t1 = Trajectory("John", None)
+# print(t1)

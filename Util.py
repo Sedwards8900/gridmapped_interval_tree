@@ -21,15 +21,15 @@ def read_toy_dataset(path, column_names):
     # Column ts converted to datetime format, i.e. 1353775800000 => 2012-11-24 16:50:00
     traj_df['ts'] = pd.to_datetime(traj_df['ts'], unit='ms')
 
-
+    # Convert into a geometry
     traj_df['geom'] = traj_df['geom'].apply(wkt.loads)
     traj_df = geopandas.GeoDataFrame(traj_df, geometry='geom')
+
+    # Return geodataframe
     return traj_df
 
+# Set up file path and column values, then call the function to create geo-df
 path = './toy_traj.csv.gz'
 columns = ['id', 'ts', 'geom']
 tdf = read_toy_dataset(path, columns)
 print(tdf.info())
-
-# print(tdf.head(1))
-# print(tdf['ts'])
