@@ -22,6 +22,12 @@ class Trajectory:
     return f"{self.traj_id} = [{self.tgpairs}]" # replace as needed => need to print time-geometry pairs
 
 
+  def get_id(self):
+    return self.traj_id
 
+
+  def get_tgpairs(self):
+    return self.tgpairs
+  
 # t1 = Trajectory("John", None)
 # print(t1)

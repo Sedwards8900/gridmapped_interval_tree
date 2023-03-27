@@ -23,6 +23,7 @@ used for indexing 1 dimension (which is often time intervals).
 '''
 
 from Trajectory import Trajectory
+from shapely.geometry import Polygon
 
 '''
 Grid-Mapped Interval Tree Class
@@ -36,8 +37,8 @@ class GIT:
     delta_y = 0
 
     def __init__(self):
-
-        pass
+        # Create empty grid
+        self.git_grid = {}
 
     def __str__(self):
         return 'G-IT Index SF:({sf_xmin}, {sf_ymin}):({sf_xmax}, {sf_ymax}), deltaX:{delta_x}, deltaY:{delta_y}'.format(
@@ -48,8 +49,21 @@ class GIT:
             delta_x=self.delta_x,
             delta_y=self.delta_y)  # replace as needed
 
-    def insert(self):
-        pass
+    def insert(self, trajectory):
+        id = trajectory.get_id()
+        pairs = trajectory.get_tgpairs()
+        print(pairs)
+
+        for index, row in pairs.iterrows():
+            # Get tuple of (minx, miny, maxx, maxy)
+            boundaries = row['geom'].bounds
+            
+            # Adjust size of grid according to trajectory boundaries
+            if < self.sf_xmin:
+                self.sf_min
+            
+            print(boundaries)
+
 
     def delete_by_id(self):
         pass

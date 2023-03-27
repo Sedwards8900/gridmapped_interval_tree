@@ -32,4 +32,4 @@ def read_toy_dataset(path, column_names):
 path = './toy_traj.csv.gz'
 columns = ['id', 'ts', 'geom']
 tdf = read_toy_dataset(path, columns)
-print(tdf.info())
+# print(tdf.info())
