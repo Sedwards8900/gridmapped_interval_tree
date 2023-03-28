@@ -2,6 +2,8 @@
 
 Homework 2 was designed to explore the spatial concepts for Minimum Bounding Boxes, Intervals, and Trajectory objects where its application allows the user to add trajectories to a Grid-Mapped Interval Tree that records locations of polygons in a spatial grid.
 
+The project is also available on github at https://github.com/Sedwards8900/gridmapped_interval_tree
+
 
 ## Libraries
 

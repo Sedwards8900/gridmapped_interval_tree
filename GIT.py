@@ -81,7 +81,6 @@ class GIT:
         # Find out if segment belongs to a grid block
         for key in self.git_grid: # (minx miny maxx maxy)
             # Set start and end times to 0
-            intv = []
             start = 0
             end = 0
             # Set boolean flags to handle when to start and insert interval
@@ -111,50 +110,116 @@ class GIT:
                     
                 # If segment done or this is the last row in the df while on a segment, add interval
                 if done or (ts == tgpairs.index[-1] and started):
-                    # Add 10 mins to interval to indicate it reaches until next segment begins
-                    end = end + timedelta(minutes=10)
+                    # Add 9 mins 59 seconds to interval to indicate it reaches until before next segment begins
+                    end = end + timedelta(seconds=599) # No overlap on segments per say
 
                     # Convert to simple datetime format for interval manipulation
                     start = start.to_pydatetime()
                     end = end.to_pydatetime()
 
                     # Store interval into intervaltree instance within specified grid cell
-                    self.git_grid[key][start:end] = traj_id
-
+                    if not self.git_grid[key].containsi(start, end, traj_id):
+                        self.git_grid[key][start:end] = traj_id
+                    else:
+                        print(f"Trajectory with id # {traj_id} already exists within GIT")
+                        return
+                    
                     # Reset flags to start over or end loop
                     done = False
                     started = False
+        print(f"Inserted trajectory with id # {traj_id} into GIT")
         
-        # Checking initial grid format after an insertion for testing purposes
-        for key in self.git_grid:
-            print(self.git_grid[key].is_empty())
-            print(key, " : ", self.git_grid[key])
+        # # Grid content confirmation
+        # for key in self.git_grid:
+        #     if not self.git_grid[key].is_empty():
+        #         print(key, " : ", self.git_grid[key])
 
-            if not self.git_grid[key].is_empty():
-                print("\n\n")
-                for interval in self.git_grid[key]:
-                    print(interval)
+
+
 
     '''
     Method that deletes all related tgpairs within the grid-mapped interval tree based on 
     trajectory ID provided.
     '''
     def delete_by_id(self, traj_id):
-        # # Review each grid for values within dictionary
+        deleted = []
+        found = False
+        # Review each grid for values within dictionary
+        for key in self.git_grid:
+            # If grid cell tree is not empty, proceed to check for interval vals
+            if not self.git_grid[key].is_empty():
+                
+                # Loop through intervals within tree
+                for interval in self.git_grid[key]:
+                    # If data containing trajectory id equals to given id, remove from tree
+                    if interval.data == traj_id:
+                        deleted.append((interval))
+                        found = True
+
+                # Remove found intervals from tree in specific grid
+                for elem in deleted:
+                    self.git_grid[key].remove(elem)
+                # Reset intervals to be deleted
+                deleted = []
+
+        if found:
+            print(f"Deleted trajectory with id # {traj_id} from GIT")
+        else:
+            print(f"Trajectory with id # {traj_id} not found GIT")
+        
+        # # Grid content confirmation
         # for key in self.git_grid:
-        #     # If grid cell tree is not empty, proceed to check for interval vals
         #     if not self.git_grid[key].is_empty():
-        #         # If data containing trajectory id equals to given id, remove from tree
-        #         if self.git_grid[key].data == traj_id:
+        #         print(key, " : ", self.git_grid[key])
+
+
+    '''
+    Temporal window query: Given two (ordered) time points (t1, t2) which represent a 
+    time range, find all trajectory identifiers that temporally overlap with the 
+    given temporal range.
+    '''
+    def t_window(self, time_tuple):
+        # Set interval values to same type within interval tree object
+        start = time_tuple[0].to_pydatetime()
+        end = time_tuple[1].to_pydatetime()
+
+        start = start - timedelta(minutes=5)
+        end = end + timedelta(minutes=5)
+
+        # Set variable to store all ids for trajectories
+        overlaps = set()
+        
+        # Access each tree per grid cell
+        for key in self.git_grid:
+
+            if not self.git_grid[key].is_empty():
+                # Check if overlap in time occurs, returns a set variable
+                temp = self.git_grid[key][start:end]
+                # Extract traj ids from set
+                if temp:
+                    for interval in temp:
+                        # ranges are inclusive of the lower limit, but non-inclusive of the upper limit
+                        overlaps.add(interval.data) 
+        if overlaps:
+            return overlaps
+        else:
+            return(f"No interval found overlaping given time range")
+
+    
+    '''
+    Spatial window query: Given two coordinates (i.e., (x1, y1), (x2, y2)) that will 
+    represent a bounding box (envelope), find all trajectory identifiers that spatially 
+    overlap with the given box.
+    '''
+    def sp_window(self, coord1, coord2):
         pass
 
-
-    def t_window(self):
-        pass
-
-    def sp_window(self):
-        pass
-
+    '''
+    Spatio-temporal window query: Given an envelope (defined using two coordinates, as 
+    in the spatial window query) and a time range (defined using two time points, 
+    as in the temporal query), find all trajectory identifiers that both spatially 
+    and temporally overlap with the given envelope and time range.
+    '''
     def st_window(self):
         pass
 
