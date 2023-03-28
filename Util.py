@@ -17,7 +17,7 @@ def read_toy_dataset(path, column_names):
     # Read and save as dataframe after decompressing csv file, no header available, 
     # adding a tab as a separator between each val found and using the column names given
     traj_df = pd.read_csv(filepath_or_buffer=path, compression='gzip', header=None, sep='\t', names=column_names)
-    
+
     # Column ts converted to datetime format, i.e. 1353775800000 => 2012-11-24 16:50:00
     traj_df['ts'] = pd.to_datetime(traj_df['ts'], unit='ms')
 

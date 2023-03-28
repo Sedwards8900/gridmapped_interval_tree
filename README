@@ -1,2 +1,46 @@
+# Spatial Databases Homework 2 Project
 
-detailing how to run your code
+Homework 2 was designed to explore the spatial concepts for Minimum Bounding Boxes, Intervals, and Trajectory objects where its application allows the user to add trajectories to a Grid-Mapped Interval Tree that records locations of polygons in a spatial grid.
+
+
+## Libraries
+
+To run this assignment successfully you will need the following libraries/modules:
+- shapely
+- intervaltree
+- collections
+- pandas
+- geopandas
+- math
+
+
+## Steps to run project code
+
+### Install requirements
+
+Before executing the main file on your terminal, you must install the requirement libraries listed above as follow:
+
+In your terminal, run one of the following commands:
+
+pip install -r requirements.txt
+
+or 
+
+pip3 install -r requirements.txt
+
+The command you will be able to execute depends on the pip version installed in your machine.
+
+### Run code within TestGIT.py file
+
+To execute the code within the TestGIT.py file, you must run the following prompt on your terminal:
+
+python TestGIT.py
+
+If for any reason the command causes an error and is unable to execute, you must check if your python invocation command is different. For instance, if python3 is installed in your machine, you will use instead the following:
+
+python3 TestGIT.py
+
+The file will run and show the results in the terminal for your view. Have at it!
+
+
+
