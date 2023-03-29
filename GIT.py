@@ -22,11 +22,9 @@ used for indexing 1 dimension (which is often time intervals).
 
 '''
 
-from Trajectory import Trajectory
 from shapely.geometry import Polygon
-from intervaltree import Interval, IntervalTree
+from intervaltree import IntervalTree
 from collections import defaultdict
-import pandas as pd
 from datetime import timedelta
 
 '''
@@ -223,7 +221,7 @@ class GIT:
         if overlaps:
             return overlaps
         else:
-            return(f"No trajectory found overlaping given bounding box")
+            return(f"No trajectory found overlaping given spatial bounding box")
 
 
     '''
@@ -232,7 +230,31 @@ class GIT:
     as in the temporal query), find all trajectory identifiers that both spatially 
     and temporally overlap with the given envelope and time range.
     '''
-    def st_window(self):
-        pass
+    def st_window(self, c1, c2, time_tuple):
+        overlaps = set()
+        # Set interval values to same type within interval tree object
+        start = time_tuple[0].to_pydatetime()
+        end = time_tuple[1].to_pydatetime()
+
+        # Access each tree per grid cell
+        for key in self.git_grid:
+            if not self.git_grid[key].is_empty():
+
+                # If grid cell and box as Polygons intersect, proceed to check for intervals
+                box = Polygon([(c1[0], c1[1]),(c1[0],c2[1]),(c2[0],c2[1]),(c2[0],c1[1])])
+                cell = Polygon([(key[0],key[1]),(key[0],key[3]),(key[2],key[1]),(key[2],key[3])])
+                
+                if box.intersects(cell):
+                    # Check if overlap in time occurs, returns a set variable
+                    temp = self.git_grid[key][start:end]
+                    if temp:
+                        for interval in temp:
+                            # ranges are inclusive of the lower limit, but non-inclusive of the upper limit
+                            overlaps.add(interval.data)
+
+        if overlaps:
+            return overlaps
+        else:
+            return(f"No trajectory found overlaping given spatio-temporal bounding box")
 
 
