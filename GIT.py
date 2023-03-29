@@ -183,9 +183,6 @@ class GIT:
         start = time_tuple[0].to_pydatetime()
         end = time_tuple[1].to_pydatetime()
 
-        start = start - timedelta(minutes=5)
-        end = end + timedelta(minutes=5)
-
         # Set variable to store all ids for trajectories
         overlaps = set()
         
@@ -203,7 +200,7 @@ class GIT:
         if overlaps:
             return overlaps
         else:
-            return(f"No interval found overlaping given time range")
+            return(f"No trajectory found overlaping given time range")
 
     
     '''
@@ -211,8 +208,23 @@ class GIT:
     represent a bounding box (envelope), find all trajectory identifiers that spatially 
     overlap with the given box.
     '''
-    def sp_window(self, coord1, coord2):
-        pass
+    def sp_window(self, c1, c2):
+        overlaps = set()
+        # Access each tree per grid cell
+        for key in self.git_grid:
+            if not self.git_grid[key].is_empty():
+
+                # If grid cell and box as Polygons intersect, obtain data from each interval within
+                box = Polygon([(c1[0], c1[1]),(c1[0],c2[1]),(c2[0],c2[1]),(c2[0],c1[1])])
+                cell = Polygon([(key[0],key[1]),(key[0],key[3]),(key[2],key[1]),(key[2],key[3])])
+                if box.intersects(cell):
+                    for interval in self.git_grid[key]:
+                        overlaps.add(interval.data)
+        if overlaps:
+            return overlaps
+        else:
+            return(f"No trajectory found overlaping given bounding box")
+
 
     '''
     Spatio-temporal window query: Given an envelope (defined using two coordinates, as 
